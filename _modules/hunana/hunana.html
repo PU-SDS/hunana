@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>hunana.hunana &mdash; HUNANA  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> HUNANA
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../hunana.html">Hunana Package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">HUNANA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>hunana.hunana</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hunana.hunana</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">groupby</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+<span class="kn">from</span> <span class="nn">Bio.SeqIO</span> <span class="k">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">SeqRecord</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">HeaderDecode</span>
+<span class="kn">from</span> <span class="nn">.entropy</span> <span class="k">import</span> <span class="n">NormalizedEntropy</span>
+<span class="kn">from</span> <span class="nn">.datatypes</span> <span class="k">import</span> <span class="n">Position</span><span class="p">,</span> <span class="n">Variant</span><span class="p">,</span> <span class="n">VariantDict</span>
+<span class="kn">from</span> <span class="nn">.dynamic_constants</span> <span class="k">import</span> <span class="n">DynamicConstants</span>
+<span class="kn">from</span> <span class="nn">.errorhandlers</span> <span class="k">import</span> <span class="n">SequenceFileNotFound</span><span class="p">,</span> <span class="n">HeaderDecodeError</span>
+<span class="kn">from</span> <span class="nn">.errorhandlers.exceptions</span> <span class="k">import</span> <span class="n">SequenceLengthError</span><span class="p">,</span> <span class="n">NoSequencesProvided</span><span class="p">,</span> <span class="n">InvalidKmerLength</span><span class="p">,</span> <span class="n">NoHeaderFormat</span><span class="p">,</span> \
+    <span class="n">HeaderItemCountInvalid</span><span class="p">,</span> <span class="n">HeaderItemEmpty</span>
+
+
+<div class="viewcode-block" id="Hunana"><a class="viewcode-back" href="../../hunana.html#hunana.hunana.Hunana">[docs]</a><span class="k">class</span> <span class="nc">Hunana</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">DISALLOWED_CHARS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;J&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;O&#39;</span><span class="p">,</span> <span class="s1">&#39;U&#39;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seqs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">],</span> <span class="n">kmer_len</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+                 <span class="n">header_decode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">json_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">max_samples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+                 <span class="n">iterations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">header_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">no_header_error</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            The Hunana algorithm returns a list of Position objects each corresponding to a kmer position.</span>
+
+<span class="sd">            :param seqs: A file handle, a FASTA sequence wrapped in a handle, or a filepath.</span>
+<span class="sd">            :param kmer_len: The length of the kmers to generate (default:  9).</span>
+<span class="sd">            :param header_decode: Whether to use FASTA headers to derive kmer information (default: False).</span>
+<span class="sd">            :param json_result: Whether the results should be returned in json format (default: False).</span>
+<span class="sd">            :param max_samples: The maximum number of samples to use when calculating entropy (default: 10000).</span>
+<span class="sd">            :param iterations: The maximum number of iterations to use when calculating entropy (default: 10).</span>
+<span class="sd">            :param header_format: The format of the header (ex: (id)|(species)|(country))</span>
+<span class="sd">            :param no_header_error: Whether missing data in the header during header decode throws an error</span>
+<span class="sd">            (default: False)</span>
+
+<span class="sd">            :type seqs: Union[str, TextIOWrapper, StringIO]</span>
+<span class="sd">            :type kmer_len: Optional[int]</span>
+<span class="sd">            :type header_decode: Optional[bool]</span>
+<span class="sd">            :type max_samples: Optional[int]</span>
+<span class="sd">            :type iterations: Optional[int]</span>
+<span class="sd">            :type json_result: Optional[bool]</span>
+<span class="sd">            :type header_format: Optional[str]</span>
+<span class="sd">            :type no_header_error: Optional[bool]</span>
+
+<span class="sd">            **Usage:**</span>
+<span class="sd">                &gt;&gt;&gt; from hunana import Hunana</span>
+<span class="sd">                &gt;&gt;&gt; results = Hunana(&#39;path/to/sequence.fasta&#39;).run()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_seqs</span><span class="p">(</span><span class="n">seqs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kmer_len</span> <span class="o">=</span> <span class="n">kmer_len</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_decode</span> <span class="o">=</span> <span class="n">header_decode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">json_result</span> <span class="o">=</span> <span class="n">json_result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_samples</span> <span class="o">=</span> <span class="n">max_samples</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="n">iterations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_format</span> <span class="o">=</span> <span class="n">header_format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_header_error</span> <span class="o">=</span> <span class="n">no_header_error</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Let&#39;s make sure the sequences are aligned and kmer length is valid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_seqs</span><span class="p">()</span>
+
+        <span class="c1"># If the user needs header data decoded, we prepare the necessary data here</span>
+        <span class="k">if</span> <span class="n">header_decode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_header_decode</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_seqs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method makes sure that all sequences are of equal length (ie: aligned). If not, it throws an error.</span>
+<span class="sd">            It also ensures that the k-mer length provided by the user is valid given the length of the sequences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NoSequencesProvided</span><span class="p">()</span>
+
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">groupby</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">seq</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">seq</span><span class="p">))</span>
+        <span class="n">groups_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">length</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">group_seqs</span><span class="p">)</span> <span class="k">for</span> <span class="n">length</span><span class="p">,</span> <span class="n">group_seqs</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">groups_dict</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SequenceLengthError</span><span class="p">(</span><span class="n">groups_dict</span><span class="p">)</span>
+
+        <span class="n">seq_length</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">groups_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmer_len</span> <span class="o">&gt;=</span> <span class="n">seq_length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidKmerLength</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmer_len</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_header_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This method prepares for header decode by checking if the user-provided sequences abide by the</span>
+<span class="sd">            specifications.</span>
+
+<span class="sd">            If the sequences look good, a regex pattern is generated for the headers which will later be used to</span>
+<span class="sd">            extract the metadata from the headers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_format</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NoHeaderFormat</span><span class="p">()</span>
+
+        <span class="n">desired_header_item_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_format</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">:</span>
+            <span class="n">header_items</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)</span>
+            <span class="n">actual_header_item_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">header_items</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">actual_header_item_count</span> <span class="o">!=</span> <span class="n">desired_header_item_count</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">HeaderItemCountInvalid</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="n">desired_header_item_count</span><span class="p">,</span> <span class="n">actual_header_item_count</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="o">==</span> <span class="n">header_item</span> <span class="ow">or</span> <span class="n">header_item</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="k">for</span> <span class="n">header_item</span> <span class="ow">in</span> <span class="n">header_items</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_header_error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">HeaderItemEmpty</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+                <span class="n">header_items</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Unknown&#39;</span> <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="k">else</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">header_items</span><span class="p">]</span>
+                <span class="n">seq</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_items</span><span class="p">)</span>
+
+        <span class="n">DynamicConstants</span><span class="o">.</span><span class="n">SEQ_DESCRIPTIONS</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">description</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">HeaderDecode</span><span class="o">.</span><span class="n">set_header_regex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_format</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">HeaderDecodeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header_format</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_create_variant_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kmers</span><span class="p">:</span> <span class="nb">zip</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">VariantDict</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns a list of VariantDict (a dictionary of lists). We will later use this to calculate entropy, and</span>
+<span class="sd">            also to decode the headers (if the user needs it).</span>
+
+<span class="sd">            :param kmers: A zip object containing kmers</span>
+<span class="sd">            :type kmers: zip</span>
+
+<span class="sd">            :return: A list of VariantDict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">kmer</span> <span class="ow">in</span> <span class="n">kmers</span><span class="p">:</span>
+            <span class="n">unique</span> <span class="o">=</span> <span class="n">VariantDict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kmer</span><span class="p">):</span>
+                <span class="n">unique</span><span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">unique</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;illegal-char&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="n">positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">positions</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_seqs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">seqs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SeqRecord</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Checks if the FASTA filepath is valid and file is present, if so, returns a list of SeqRecords for each</span>
+<span class="sd">            sequence.</span>
+
+<span class="sd">            :param seqs: Handle to the file, or the filename as a string.</span>
+<span class="sd">            :type seqs: Union[str, TextIOWrapper, StringIO]</span>
+
+<span class="sd">            :return: A list of SeqRecords for each sequence in the FASTA file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seqs</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">seqs</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">SequenceFileNotFound</span><span class="p">(</span><span class="n">seqs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">seqs</span><span class="p">,</span> <span class="s1">&#39;fasta&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_kmers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">zip</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Matches each kmer position of all sequences together (ex: all first kmer positions grouped together.)</span>
+
+<span class="sd">            :returns: A Zip object containing all k-mers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kmers_seqs</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">seq</span><span class="p">)</span> <span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seqs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">kmers_seqs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Generates kmers of each sequence in it&#39;s respective element (ex: all kmers of sequence 1 in the first</span>
+<span class="sd">            element of the generator).</span>
+
+<span class="sd">            :param seq: The sequence to generate kmers out of.</span>
+<span class="sd">            :type seq: str</span>
+
+<span class="sd">            return: A Generator object containing kmers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmer_len</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmer_len</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ele</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DISALLOWED_CHARS</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s1">&#39;illegal-char&#39;</span>
+
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">(</span><span class="n">elem</span><span class="p">,)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">ele</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">DISALLOWED_CHARS</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s1">&#39;illegal-char&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_create_position_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counters</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Counter</span><span class="p">],</span>
+                                 <span class="n">variant_dicts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">VariantDict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Create kmer position objects with entropy, position and variant properties</span>
+
+<span class="sd">            :param counters: An iterable of containing Counters for each variant seen at a specific position.</span>
+<span class="sd">            :param variant_dicts: A list of variant dictionaries that will later be used for calculating the entropy</span>
+<span class="sd">            and decoding the header data.</span>
+
+<span class="sd">            :type counters: Iterable[Counter]</span>
+<span class="sd">            :type variant_dicts: List[VariantDict]</span>
+
+<span class="sd">            :return A Generator object for Position objects for each kmer position</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">counters</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">Position</span><span class="p">(</span>
+                <span class="n">position</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
+                <span class="n">variants</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_variant_objects</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">counter</span><span class="p">),</span>
+                <span class="n">variants_flattened</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">elements</span><span class="p">()),</span>
+                <span class="n">variant_dict</span><span class="o">=</span><span class="n">variant_dicts</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">variant_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header_decode</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_variant_objects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">variant_counter</span><span class="p">:</span> <span class="n">Counter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Variant</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Creates variant objects to be inserted to Position objects later.</span>
+
+<span class="sd">            :param idx: The position number.</span>
+<span class="sd">            :param variant_counter: The counter containing the variants.</span>
+
+<span class="sd">            :type idx: int</span>
+<span class="sd">            :type variant_counter: Counter</span>
+
+<span class="sd">            :return: A Generator of Variant objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">num_variants</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">variant_counter</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">variant_objects</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">Variant</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">seq</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_incidence</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">num_variants</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">count</span>
+            <span class="ow">in</span> <span class="n">variant_counter</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">variant_objects</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_calc_incidence</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">variant_hits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_hits</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Calculates the incidence for a given variant.</span>
+
+<span class="sd">            :param variant_hits: The number of times the variant was seen in the sequences at this particular position.</span>
+<span class="sd">            :param total_hits: The total number of variants.</span>
+
+<span class="sd">            :type variant_hits: int</span>
+<span class="sd">            :type total_hits: int</span>
+
+<span class="sd">            :return: The incidence of this particular variant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">incidence</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">variant_hits</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">total_hits</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">incidence</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Hunana.run"><a class="viewcode-back" href="../../hunana.html#hunana.hunana.Hunana.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Position</span><span class="p">]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Runs the Hunana algorithm with the options provided at the instantiation of the class.</span>
+
+<span class="sd">            :return: Returns either json results or a list of Position objects.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kmers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kmers</span><span class="p">()</span>
+        <span class="n">variant_dicts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_variant_dict</span><span class="p">(</span><span class="n">kmers</span><span class="p">)</span>
+        <span class="n">variant_counters</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_counter</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">variant_dicts</span><span class="p">)</span>
+        <span class="n">kmer_position_objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_position_objects</span><span class="p">(</span><span class="n">variant_counters</span><span class="p">,</span> <span class="n">variant_dicts</span><span class="p">)</span>
+        <span class="n">entropy</span> <span class="o">=</span> <span class="n">NormalizedEntropy</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">kmer_position_objects</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">entropy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">unpicklable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">results</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Perdana University.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

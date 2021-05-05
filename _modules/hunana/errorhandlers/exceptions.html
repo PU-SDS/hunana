@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>hunana.errorhandlers.exceptions &mdash; HUNANA  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> HUNANA
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../hunana.html">Hunana Package</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">HUNANA</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>hunana.errorhandlers.exceptions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for hunana.errorhandlers.exceptions</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="SequenceFileNotFound"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.SequenceFileNotFound">[docs]</a><span></span><span class="k">class</span> <span class="nc">SequenceFileNotFound</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when the FASTA file path is invalid, or the file is not found.</span>
+<span class="sd">            </span>
+<span class="sd">            :param seq_path: The path to the FASTA file.</span>
+<span class="sd">            :type seq_path: str </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">The FASTA file was not found at the following location:</span><span class="se">\n\t</span><span class="si">{seq_path}</span><span class="se">\n</span><span class="s1">Advice: </span><span class="se">\n\t</span><span class="s1">Please check &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;whether the path is valid, or contains any errors.&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">SequenceFileNotFound</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NoHeaderFormat"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.NoHeaderFormat">[docs]</a><span class="k">class</span> <span class="nc">NoHeaderFormat</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when header decoding is enabled, but no header format is provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;No header format provided. Please provide the header format.</span><span class="se">\n\t</span><span class="s1">Using command-line: Use the flag &#39;</span> \
+              <span class="s1">&#39;&quot;hunana -f&quot;, or run &quot;hunana -h&quot; for help.</span><span class="se">\n\t</span><span class="s1">Using module: Set the &quot;header_format&quot; attribute.&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">NoHeaderFormat</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeaderDecodeError"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.HeaderDecodeError">[docs]</a><span class="k">class</span> <span class="nc">HeaderDecodeError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when the correct regex pattern could not be generated.</span>
+
+<span class="sd">            :param header_format: The format of the FASTA header.</span>
+<span class="sd">            :type header_format: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Failed to generate correct regex expression using the header format:</span><span class="se">\n\t</span><span class="si">{header_format}</span><span class="se">\n</span><span class="s1">Advice:</span><span class="se">\n\t</span><span class="s1">&#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;Make sure the header format you provided accurately reflects the format of all the FASTA headers in &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;your FASTA file.&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">HeaderDecodeError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SequenceLengthError"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.SequenceLengthError">[docs]</a><span class="k">class</span> <span class="nc">SequenceLengthError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when not all sequences in the slignment are of equal length.</span>
+
+<span class="sd">            :param groups_dict: A dictionary containing sequences grouped by sequence length.</span>
+<span class="sd">            :type groups_dict: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">The FASTA sequences provided does not appear to be aligned and are of various lengths.</span><span class="se">\n</span><span class="s1">&#39;</span>
+
+        <span class="n">error_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">length</span><span class="p">,</span> <span class="n">sequences</span> <span class="ow">in</span> <span class="n">groups_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">sequence</span><span class="o">.</span><span class="n">description</span> <span class="k">for</span> <span class="n">sequence</span> <span class="ow">in</span> <span class="n">sequences</span><span class="p">]</span>
+            <span class="n">headers_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+
+            <span class="n">error_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Length: </span><span class="si">{length}</span><span class="se">\n\t</span><span class="si">{seqs}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">seqs</span><span class="o">=</span><span class="n">headers_string</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Yes, this kind of string concatenation is bad, but it&#39;s a single time thing and doesn&#39;t cost much</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SequenceLengthError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error_data</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="NoSequencesProvided"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.NoSequencesProvided">[docs]</a><span class="k">class</span> <span class="nc">NoSequencesProvided</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when no sequences are provided by the user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;No sequences are provided. Please make sure your FASTA file is not empty, or invalid.&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">NoSequencesProvided</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InvalidKmerLength"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.InvalidKmerLength">[docs]</a><span class="k">class</span> <span class="nc">InvalidKmerLength</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">kmer_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when the kmer length is bigger than, or equal to the sequence length.</span>
+
+<span class="sd">            :param seq_len: The length of the sequences provided by the user.</span>
+<span class="sd">            :param kmer_len: The length of the kmers that user wants to generate.</span>
+
+<span class="sd">            :type seq_len: int</span>
+<span class="sd">            :type kmer_len: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;The kmer length is bigger than, or equal to the length of the sequenced provided.</span><span class="se">\n\t</span><span class="s1">KMER LENGTH: &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;</span><span class="si">{kmer_len}</span><span class="se">\n\t</span><span class="s1">SEQUENCE LENGTH: </span><span class="si">{seq_len}</span><span class="s1">&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">InvalidKmerLength</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeaderItemCountInvalid"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.HeaderItemCountInvalid">[docs]</a><span class="k">class</span> <span class="nc">HeaderItemCountInvalid</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">desired_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">actual_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when the number of items provided in the header format does not match the number of items in</span>
+<span class="sd">            the actual FASTA header of a sequence.</span>
+
+<span class="sd">            :param header: The affected FASTA header.</span>
+<span class="sd">            :param desired_count: The desired number of header items derived from the header format provided by user.</span>
+<span class="sd">            :param actual_count: The actual number of header items in the FASTA header.</span>
+
+<span class="sd">            :type header: str</span>
+<span class="sd">            :type desired_count: int</span>
+<span class="sd">            :type actual_count: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;The header data count does not match.</span><span class="se">\n\t</span><span class="s1">DESIRED HEADER DATA COUNT: </span><span class="si">{desired_count}</span><span class="se">\n\t</span><span class="s1">ACTUAL COUNT: &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;</span><span class="si">{actual_count}</span><span class="se">\n\t</span><span class="s1">AFFECTED HEADER: </span><span class="si">{header}</span><span class="s1">&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">HeaderItemCountInvalid</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HeaderItemEmpty"><a class="viewcode-back" href="../../../hunana.errorhandlers.html#hunana.errorhandlers.exceptions.HeaderItemEmpty">[docs]</a><span class="k">class</span> <span class="nc">HeaderItemEmpty</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Error raised when header data errors are not suppressed (via no_header_data_error) and a header item</span>
+<span class="sd">            is empty.</span>
+
+<span class="sd">            :param header: The affected FASTA header.</span>
+<span class="sd">            :type header: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;Empty header items found:</span><span class="se">\n\t</span><span class="s1">AFFECTED HEADER: </span><span class="si">{header}</span><span class="se">\n\n</span><span class="s1">You may set the flag &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;&quot;no_header_error=True&quot; to ignore this error and Hunana shall append &quot;Unknown&quot; to all empty &#39;</span> \
+              <span class="n">f</span><span class="s1">&#39;header items.&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">HeaderItemEmpty</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Perdana University.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
